@@ -26,7 +26,9 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body = await request.json();
-    const { email, password } = body;
+      console.log(body)
+
+      const { email, password } = body;
 
     // Validate input
     if (!email || !password) {
@@ -38,6 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Find user by email (in a real app, query your database)
     const user = MOCK_USERS.find(u => u.email === email);
+    console.dir(user)
     if (!user) {
       return NextResponse.json(
         { success: false, message: 'Invalid credentials' },
@@ -47,6 +50,7 @@ export async function POST(request: NextRequest) {
 
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+    console.log(passwordMatch)
     if (!passwordMatch) {
       return NextResponse.json(
         { success: false, message: 'Invalid credentials' },
