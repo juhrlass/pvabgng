@@ -65,12 +65,20 @@ export default function Navbar() {
                 </div>
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
-              >
-                Login
-              </Link>
+              <div className="flex space-x-2">
+                <Link
+                  href="/login"
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Sign Up
+                </Link>
+              </div>
             )}
           </div>
           <div className="-mr-2 flex items-center sm:hidden">
@@ -168,6 +176,13 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Login
+              </Link>
+              <Link
+                href="/signup"
+                className="block px-4 py-2 text-base font-medium bg-blue-600 text-white hover:bg-blue-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sign Up
               </Link>
             </div>
           )}
