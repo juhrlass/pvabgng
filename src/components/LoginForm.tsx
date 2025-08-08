@@ -44,8 +44,9 @@ export default function LoginForm() {
       router.push('/dashboard');
       router.refresh(); // Refresh to update UI with new auth state
       
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during login');
+    } catch (err) {
+        console.error('Login error:', err);
+      setError('An error occurred during login');
     } finally {
       setLoading(false);
     }

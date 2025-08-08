@@ -46,6 +46,7 @@ async function verifyToken(token: string) {
     await jwtVerify(token, secret);
     return true;
   } catch (error) {
+      console.error(error)
     return false;
   }
 }

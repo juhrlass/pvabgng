@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { removeTokenCookie } from '@/lib/auth';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Remove the token cookie
     await removeTokenCookie();
@@ -21,6 +21,6 @@ export async function POST(request: NextRequest) {
 }
 
 // Also handle GET requests for logout (useful for simple logout links)
-export async function GET(request: NextRequest) {
-  return POST(request);
+export async function GET() {
+  return POST();
 }
