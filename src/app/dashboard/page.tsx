@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 // Server component to get user data
 async function getUserData() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   
   if (!token) {

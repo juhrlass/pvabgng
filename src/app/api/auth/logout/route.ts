@@ -4,7 +4,7 @@ import { removeTokenCookie } from '@/lib/auth';
 export async function POST(request: NextRequest) {
   try {
     // Remove the token cookie
-    removeTokenCookie();
+    await removeTokenCookie();
     
     // Return success response
     return NextResponse.json({

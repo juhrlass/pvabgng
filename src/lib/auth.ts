@@ -47,8 +47,10 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
 /**
  * Sets the JWT token in a cookie
  */
-export function setTokenCookie(token: string) {
-  cookies().set({
+export async function setTokenCookie(token: string) {
+    const cookieStore = await cookies();
+
+    cookieStore.set({
     name: 'token',
     value: token,
     httpOnly: true,
@@ -62,22 +64,25 @@ export function setTokenCookie(token: string) {
 /**
  * Removes the JWT token cookie
  */
-export function removeTokenCookie() {
-  cookies().delete('token');
+export async function removeTokenCookie() {
+    const cookieStore = await cookies();
+
+    cookieStore.delete('token');
 }
 
 /**
  * Gets the JWT token from the cookies
  */
-export function getTokenFromCookies(): string | undefined {
-  return cookies().get('token')?.value;
+export async function getTokenFromCookies(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  return cookieStore.get('token')?.value;
 }
 
 /**
  * Gets the current user from the JWT token in cookies
  */
 export async function getCurrentUser(): Promise<JWTPayload | null> {
-  const token = getTokenFromCookies();
+  const token = await getTokenFromCookies();
   if (!token) return null;
   
   return verifyToken(token);

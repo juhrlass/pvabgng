@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Set token in HTTP-only cookie
-    setTokenCookie(token);
+    await setTokenCookie(token);
 
     // Return success response (without exposing sensitive data)
     return NextResponse.json({
