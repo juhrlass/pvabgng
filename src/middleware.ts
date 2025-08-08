@@ -2,68 +2,94 @@ import {NextResponse} from 'next/server';
 import type {NextRequest} from 'next/server';
 import {jwtVerify} from 'jose';
 
-// Define which routes are protected and require authentication
-const protectedRoutes = [
-    '/dashboard',
-    '/profile',
-    '/api/protected',
-    '/api/auth/me',
-    '/api/auth/logout',
-];
+// === Route-Konfiguration zentralisiert ===
+const routesConfig = {
+    protected: [
+        '/dashboard',
+        '/profile',
+        '/api/protected',
+        '/api/auth/me',
+        '/api/auth/logout',
+    ],
+    guestOnly: [
+        '/login',
+        '/signup',
+        '/api/auth/login',
+    ],
+};
 
-// Define which routes should be accessible only for non-authenticated users
-const authRoutes = [
-    '/login',
-    '/signup',
-    '/api/auth/login',
-];
+// === JWT Secret Handling ===
+function getJWTSecret() {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+        if (process.env.NODE_ENV === 'production') {
+            throw new Error('JWT_SECRET is missing in production!');
+        }
+        return 'dev_secret_key';
+    }
+    return secret;
+}
 
+// === Token-Verifizierung ===
+async function verifyToken(token: string): Promise<boolean> {
+    try {
+        const {payload} = await jwtVerify(
+            token,
+            new TextEncoder().encode(getJWTSecret())
+        );
+
+        // Optionale zusätzliche Checks
+        if (!payload.sub) return false; // Muss z.B. User-ID haben
+        if (payload.exp && Date.now() >= payload.exp * 1000) return false; // Abgelaufen
+
+        return true;
+    } catch (err) {
+        if (process.env.NODE_ENV !== 'production') {
+            console.warn('JWT verification failed:', err instanceof Error ? err.message : err);
+        }
+        return false;
+    }
+}
+
+// === Middleware ===
 export async function middleware(request: NextRequest) {
     const {pathname} = request.nextUrl;
 
-    // Get the JWT token from the cookies
-    const token = request.cookies.get('token')?.value;
+    const isProtectedRoute = routesConfig.protected.some(route =>
+        pathname.startsWith(route)
+    );
+    const isGuestOnlyRoute = routesConfig.guestOnly.some(route =>
+        pathname.startsWith(route)
+    );
 
-    // Check if the user is authenticated
+    // Falls keine Auth-Logik nötig → durchlassen
+    if (!isProtectedRoute && !isGuestOnlyRoute) {
+        return NextResponse.next();
+    }
+
+    const token = request.cookies.get('token')?.value;
     const isAuthenticated = token ? await verifyToken(token) : false;
 
-    // Redirect authenticated users away from auth pages
-    if (isAuthenticated && authRoutes.some(route => pathname.startsWith(route))) {
+    // Authentifizierte User sollen nicht auf Guest-Only-Seiten
+    if (isGuestOnlyRoute && isAuthenticated) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    // Redirect unauthenticated users away from protected routes
-    if (!isAuthenticated && protectedRoutes.some(route => pathname.startsWith(route))) {
+    // Nicht-authentifizierte User sollen nicht auf Protected-Seiten
+    if (isProtectedRoute && !isAuthenticated) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
     return NextResponse.next();
 }
 
-// Verify the JWT token
-async function verifyToken(token: string) {
-    try {
-        // Use environment variable for the secret key in production
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'default_secret_key_change_in_production');
-
-        await jwtVerify(token, secret);
-        return true;
-    } catch (error) {
-        console.error(error)
-        return false;
-    }
-}
-
-// Configure which routes the middleware should run on
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - public (public files)
-         */
-        '/((?!_next/static|_next/image|favicon.ico|public).*)',
+        '/dashboard',
+        '/profile',
+        '/api/protected',
+        '/api/auth',
+        '/login',
+        '/signup',
     ],
 };
