@@ -58,12 +58,10 @@ export default function Navbar() {
                   <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {user.name || user.email}
                   </div>
-                  <Link
-                    href="/logout"
-                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700"
-                  >
-                    Logout
-                  </Link>
+                  <LogoutButton 
+                    variant="secondary"
+                    className="px-3 py-2 rounded-md text-sm font-medium"
+                  />
                 </div>
               </div>
             ) : (
@@ -155,13 +153,11 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="mt-3 space-y-1">
-                <Link
-                  href="/logout"
-                  className="block w-full text-left px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Logout
-                </Link>
+                <LogoutButton 
+                  variant="secondary"
+                  className="block w-full text-left px-4 py-2 text-base font-medium"
+                  onLogoutSuccess={() => setIsMenuOpen(false)}
+                />
               </div>
             </>
           ) : (
