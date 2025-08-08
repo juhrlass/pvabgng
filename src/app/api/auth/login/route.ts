@@ -1,26 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcrypt';
 import { createToken, setTokenCookie } from '@/lib/auth';
-
-// In a real application, you would fetch this from a database
-const MOCK_USERS = [
-  {
-    id: '1',
-    email: 'user@example.com',
-    // Password: password123
-    passwordHash: '$2b$10$8OxDEuDS1V0YDXzCj1LNyeEEfB5A5Z8nH9R9q0hNHBQnXQJW0blPG',
-    name: 'Test User',
-    role: 'user',
-  },
-  {
-    id: '2',
-    email: 'admin@example.com',
-    // Password: admin123
-    passwordHash: '$2b$10$8OxDEuDS1V0YDXzCj1LNyeEEfB5A5Z8nH9R9q0hNHBQnXQJW0blPG',
-    name: 'Admin User',
-    role: 'admin',
-  },
-];
+import { UserRepository } from '@/db/repositories/userRepository';
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,8 +18,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by email (in a real app, query your database)
-    const user = MOCK_USERS.find(u => u.email === email);
+    // Create user repository
+    const userRepository = new UserRepository();
+    
+    // Find user by email
+    const user = await userRepository.findByEmail(email);
     console.dir(user)
     if (!user) {
       return NextResponse.json(
@@ -49,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify password
-    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+    const passwordMatch = await userRepository.verifyPassword(user, password);
     console.log(passwordMatch)
     if (!passwordMatch) {
       return NextResponse.json(
