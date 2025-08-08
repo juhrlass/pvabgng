@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PVABGNG",
   description: "PVABGNG",
+  icons: {
+    icon: '/pvabg.svg',
+    apple: '/pvabg.svg',
+  },
 };
 
 export default function RootLayout({
