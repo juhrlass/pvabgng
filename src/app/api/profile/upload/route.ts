@@ -88,8 +88,6 @@ export async function POST(request: NextRequest) {
     
     // Update the user record with the photo URL
     const updatedUser = await userRepository.update(userData.sub, {
-      // We're adding this field even though it's not in the schema
-      // It will be stored in the database but not typed in our TypeScript interface
       photoUrl,
     });
     

@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
       name: user.name??undefined,
       email: user.email,
       role: user.role??undefined,
+      photoUrl: user.photoUrl??undefined,
     });
 
     // Set token in HTTP-only cookie
@@ -60,6 +61,7 @@ export async function POST(request: NextRequest) {
         name: user.name,
         email: user.email,
         role: user.role,
+        photoUrl: user.photoUrl,
       },
     });
   } catch (error) {

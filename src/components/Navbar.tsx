@@ -63,6 +63,23 @@ export default function Navbar() {
             ) : user ? (
               <div className="relative ml-3">
                 <div className="flex items-center space-x-4">
+                  {user.photoUrl ? (
+                    <div className="h-8 w-8 rounded-full overflow-hidden">
+                      <Image
+                        src={user.photoUrl}
+                        alt="Profile"
+                        width={32}
+                        height={32}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500 text-sm font-medium">
+                        {(user.name || user.email || '').charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
                   <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {user.name || user.email}
                   </div>
@@ -168,6 +185,23 @@ export default function Navbar() {
           ) : user ? (
             <>
               <div className="flex items-center px-4">
+                {user.photoUrl ? (
+                  <div className="h-10 w-10 rounded-full overflow-hidden">
+                    <Image
+                      src={user.photoUrl}
+                      alt="Profile"
+                      width={40}
+                      height={40}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500 text-base font-medium">
+                      {(user.name || user.email || '').charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
                 <div className="ml-3">
                   <div className="text-base font-medium text-gray-800 dark:text-gray-200">
                     {user.name || user.email}

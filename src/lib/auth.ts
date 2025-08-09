@@ -15,6 +15,7 @@ export interface JWTPayload {
   name?: string;
   email?: string;
   role?: string;
+  photoUrl?: string;
   iat?: number; // issued at
   exp?: number; // expiration time
 }

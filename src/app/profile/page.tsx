@@ -28,7 +28,7 @@ async function getUserData() {
 
 export default async function ProfilePage() {
   const userData = await getUserData();
-  
+  console.dir(userData);
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -44,6 +44,7 @@ export default async function ProfilePage() {
           id: userData.sub,
           name: userData.name || '',
           email: userData.email || '',
+          photoUrl: userData.photoUrl,
         }} />
       </div>
     </div>

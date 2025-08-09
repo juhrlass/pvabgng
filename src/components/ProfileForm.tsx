@@ -25,6 +25,7 @@ interface ProfileFormProps {
     id: string;
     name: string;
     email: string;
+    photoUrl?: string;
   };
 }
 
@@ -33,7 +34,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(initialData.photoUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -118,7 +119,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         }
       }
       
-      // Show success message
+      // Show a success message
       setSuccess('Profile updated successfully');
       
       // Refresh the page to show updated data
@@ -153,6 +154,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Profile Photo</h2>
         <Card className="p-6 flex flex-col items-center">
+            <p>{photoPreview}</p>
           <div className="mb-4 relative w-32 h-32 rounded-full overflow-hidden bg-gray-200">
             {photoPreview ? (
               <Image 

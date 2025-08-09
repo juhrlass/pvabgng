@@ -6,7 +6,7 @@ import { UserRepository } from '@/db/repositories/userRepository';
 export async function POST(request: NextRequest) {
   try {
     // Get token from cookies
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
     
     if (!token) {
