@@ -1,26 +1,40 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+
+// Define form schema with Zod
+const formSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    
+  // Initialize form with react-hook-form and zod validation
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async (values: FormValues) => {
     // Reset error state
     setError('');
-    
-    // Validate form
-    if (!email || !password) {
-      setError('Email and password are required');
-      return;
-    }
     
     try {
       setLoading(true);
@@ -31,7 +45,7 @@ export default function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(values),
       });
       
       const data = await response.json();
@@ -45,7 +59,7 @@ export default function LoginForm() {
       router.refresh(); // Refresh to update UI with new auth state
       
     } catch (err) {
-        console.error('Login error:', err);
+      console.error('Login error:', err);
       setError('An error occurred during login');
     } finally {
       setLoading(false);
@@ -62,55 +76,61 @@ export default function LoginForm() {
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="user@example.com"
-            disabled={loading}
-            required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="user@example.com" 
+                    type="email" 
+                    disabled={loading}
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="••••••••"
-            disabled={loading}
-            required
+          
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="••••••••" 
+                    type="password" 
+                    disabled={loading}
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        
-        <div>
-          <button
-            type="submit"
+          
+          <Button 
+            type="submit" 
             disabled={loading}
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full"
           >
             {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </div>
-        
-        <div className="text-sm text-center mt-4">
-          <p className="text-gray-600 dark:text-gray-400">
-            Test credentials: user@example.com / password123
-          </p>
-        </div>
-      </form>
+          </Button>
+          
+          <div className="text-sm text-center mt-4">
+            <p className="text-gray-600 dark:text-gray-400">
+              Test credentials: user@example.com / password123
+            </p>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

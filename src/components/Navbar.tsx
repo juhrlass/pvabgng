@@ -7,7 +7,7 @@ import { useState } from 'react';
 import LogoutButton from './LogoutButton';
 
 export default function Navbar() {
-  const { user, loading, logout } = useAuth();
+  const { user,isLoading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -50,7 +50,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            {loading ? (
+            {isLoading ? (
               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
             ) : user ? (
               <div className="relative ml-3">
@@ -143,7 +143,7 @@ export default function Navbar() {
           )}
         </div>
         <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-700">
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center px-4">
               <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse"></div>
               <div className="ml-3 h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
