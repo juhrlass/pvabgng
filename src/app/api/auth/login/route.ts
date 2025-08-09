@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create user repository
+    // Create a user repository
     const userRepository = new UserRepository();
     
-    // Find user by email
+    // Find the user by email
     const user = await userRepository.findByEmail(email);
     console.dir(user)
     if (!user) {

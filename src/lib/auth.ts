@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // Secret key for JWT signing and verification
 // In production, use a proper secret management system
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'default_secret_key_change_in_production'
+  process.env.JWT_SECRET || 'dev_secret_key'
 );
 
 export interface JWTPayload {

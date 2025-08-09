@@ -1,16 +1,7 @@
 'use client';
 
-import React, {
-    createContext,
-    useContext,
-    useState,
-    useEffect,
-    useRef,
-    useCallback,
-    useMemo,
-    ReactNode,
-} from 'react';
-import { useRouter } from 'next/navigation';
+import React, {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState,} from 'react';
+import {useRouter} from 'next/navigation';
 
 interface User {
     id: string;
@@ -104,8 +95,7 @@ export function AuthProvider({
                 cache: 'no-store',
             };
 
-            const res = await fetch(input, safeInit);
-            return res;
+            return await fetch(input, safeInit);
         },
         []
     );
@@ -137,9 +127,9 @@ export function AuthProvider({
             setStatus(payload.user ? 'authenticated' : 'unauthenticated');
         } catch (err) {
             if (!mountedRef.current) return;
-            // Abort is expected when navigating away - don't surface as error
-            if ((err as any)?.name === 'AbortError') return;
-            console.error('revalidateUser error:', err);
+            // Abort is expected when navigating away - don't surface as an error
+
+            if (err instanceof Error && err.name === 'AbortError') return;            console.error('revalidateUser error:', err);
             setUser(null);
             setStatus('unauthenticated');
             setError('Unable to verify session');
@@ -174,7 +164,7 @@ export function AuthProvider({
                     throw new Error('Login succeeded but session not established');
                 }
 
-                // navigate to dashboard (replace to avoid extra history entry)
+                // navigate to the dashboard (replace to avoid extra history entry)
                 router.replace('/dashboard');
                 // revalidate server components if needed
                 router.refresh();
@@ -182,7 +172,7 @@ export function AuthProvider({
                 // return user for immediate usage
                 if (!mountedRef.current) throw new Error('Component unmounted');
                 if (!user) {
-                    // return latest user from state
+                    // return the latest user from state
                     return (await (await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' })).json()).user;
                 }
                 return user;
